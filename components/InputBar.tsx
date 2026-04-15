@@ -28,13 +28,13 @@ export default function InputBar({ onSend, disabled }: Props) {
     }
 
     return (
-        <div className="flex items-end gap-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
+        <div className="flex items-end gap-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 pb-[max(12px,env(safe-area-inset-bottom))]">
             <textarea
                 ref={ref}
                 rows={1}
                 disabled={disabled}
                 onKeyDown={handleKeyDown}
-                placeholder="Message the agent… (Enter to send, Shift+Enter for newline)"
+                placeholder="Write here..."
                 className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
                 style={{ maxHeight: '120px', overflowY: 'auto' }}
                 onInput={(e) => {

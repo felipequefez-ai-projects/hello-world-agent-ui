@@ -133,7 +133,7 @@ export default function ChatWindow() {
     if (!sessionId) return null
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1">
             <SessionControls
                 sessionId={sessionId}
                 onClear={handleClear}
