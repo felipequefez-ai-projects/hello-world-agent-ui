@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# hello-world-agent-ui
 
-## Getting Started
+> [English version](./README.en.md)
 
-First, run the development server:
+Interface de chat para o [hello-world-agent-api](../hello-world-agent-api). Construída com Next.js 16 + Tailwind CSS v4.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+As mensagens são transmitidas token por token via Server-Sent Events. Quando o agente chama uma ferramenta (clima, calculadora, curiosidades), um badge aparece inline antes da resposta. As sessões persistem entre recarregamentos via `localStorage`.
+
+## Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS v4** com dark mode baseado em classe
+- **Sem bibliotecas de componentes** — componentes customizados
+
+## Funcionalidades
+
+- Streaming de tokens em tempo real (SSE)
+- Visibilidade de tool calls — badges para eventos `tool_call` e `tool_result`
+- Session ID persistente — conversas sobrevivem ao recarregamento da página
+- Dark mode com persistência em `localStorage` e sem flash no carregamento
+- Layout seguro para mobile (fix `h-dvh` do iOS Safari + padding safe-area)
+
+## Estrutura do Projeto
+
+```
+app/
+  globals.css         # Tailwind v4 + variante dark baseada em classe
+  layout.tsx          # body com h-dvh, viewport-fit=cover, script anti-flash
+  page.tsx            # renderiza <ChatWindow />
+components/
+  ChatWindow.tsx      # estado central: mensagens, sessão, loop de streaming
+  MessageBubble.tsx   # bolhas de usuário / assistente + tool badges
+  ToolCallBadge.tsx   # pílula âmbar (tool_call) / verde (tool_result)
+  InputBar.tsx        # textarea auto-resize, Enter para enviar, padding safe-area
+  SessionControls.tsx # header: modal de histórico, botão limpar, toggle dark mode
+lib/
+  api.ts              # streamChat(), getHistory(), clearSession()
+  types.ts            # union SseEvent, ChatMessage, HistoryResponse
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como Executar
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Configurar a URL da API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Crie um arquivo `.env.local`:
 
-## Learn More
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-To learn more about Next.js, take a look at the following resources:
+Para produção, substitua pela URL da API publicada (ex: `https://hello-world-agent-api.vercel.app`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Iniciar a API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+A interface requer o [hello-world-agent-api](../hello-world-agent-api) em execução. Consulte o README do projeto para instruções de configuração.
 
-## Deploy on Vercel
+```bash
+cd ../hello-world-agent-api
+python main.py
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Iniciar o servidor de desenvolvimento
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm install
+npm run dev
+```
+
+Abra [http://localhost:3000](http://localhost:3000).
+
+## Deploy na Vercel
+
+```bash
+vercel --prod
+```
+
+Configure a variável de ambiente no painel da Vercel:
+
+```
+NEXT_PUBLIC_API_URL=https://hello-world-agent-api.vercel.app
+```
